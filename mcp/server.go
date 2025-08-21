@@ -42,6 +42,11 @@ type GetEventArgs struct {
 	EventID string `json:"event_id"`
 }
 
+// GetWeeklyCalendarArgs defines the arguments for the get_weekly_calendar tool.
+type GetWeeklyCalendarArgs struct {
+	CurrentDate string `json:"current_date,omitempty"`
+}
+
 // Start starts the MCP server.
 func Start(rootCmd *cobra.Command, httpAddr string) error {
 	server := mcp.NewServer(&mcp.Implementation{Name: "calctl"}, nil)
@@ -55,6 +60,11 @@ func Start(rootCmd *cobra.Command, httpAddr string) error {
 		Name:        "get_event_details",
 		Description: "Get the details of a specific event by its ID.",
 	}, getEventDetailsHandler)
+
+	mcp.AddTool(server, &mcp.Tool{
+		Name:        "analyze_weekly_calendar",
+		Description: "Analyzes the user's calendar events for the current week.",
+	}, analyzeWeeklyCalendarHandler)
 
 	if httpAddr != "" {
 		handler := mcp.NewStreamableHTTPHandler(func(*http.Request) *mcp.Server {
@@ -89,13 +99,13 @@ func Start(rootCmd *cobra.Command, httpAddr string) error {
 }
 
 // getWeeklyCalendarHandler is the handler for the get_weekly_calendar tool.
-func getWeeklyCalendarHandler(ctx context.Context, ss *mcp.ServerSession, params *mcp.CallToolParamsFor[any]) (*mcp.CallToolResultFor[any], error) {
+func getWeeklyCalendarHandler(ctx context.Context, ss *mcp.ServerSession, params *mcp.CallToolParamsFor[GetWeeklyCalendarArgs]) (*mcp.CallToolResultFor[any], error) {
 	calendarSvc, err := getCalendarSvc(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	events, err := calendar.GetWeeklyEvents(calendarSvc)
+	events, err := calendar.GetWeeklyEvents(calendarSvc, params.Arguments.CurrentDate)
 	if err != nil {
 		return nil, err
 	}
@@ -151,6 +161,30 @@ func getEventDetailsHandler(ctx context.Context, ss *mcp.ServerSession, params *
 	return &mcp.CallToolResultFor[any]{
 		Content: []mcp.Content{
 			&mcp.TextContent{Text: output},
+		},
+	}, nil
+}
+
+// analyzeWeeklyCalendarHandler is the handler for the analyze_weekly_calendar tool.
+func analyzeWeeklyCalendarHandler(ctx context.Context, ss *mcp.ServerSession, params *mcp.CallToolParamsFor[GetWeeklyCalendarArgs]) (*mcp.CallToolResultFor[any], error) {
+	calendarSvc, err := getCalendarSvc(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	events, err := calendar.GetWeeklyEvents(calendarSvc, params.Arguments.CurrentDate)
+	if err != nil {
+		return nil, err
+	}
+
+	report, err := calendar.AnalyzeEvents(events)
+	if err != nil {
+		return nil, err
+	}
+
+	return &mcp.CallToolResultFor[any]{
+		Content: []mcp.Content{
+			&mcp.TextContent{Text: report.FormatReport()},
 		},
 	}, nil
 }
