@@ -71,32 +71,32 @@ The project will be structured similarly to the existing `drivectl` tool, mainta
 #### **Tasks:**
 
 1.  **Fetch Working Hours:**
-    *   [ ] Implement logic in `internal/calendar/calendar.go` to get the user's working hours from their calendar settings using the `calendar.Settings.Get("workingHours").Do()` call.
-    *   [ ] Create a new command `cmd/work-hours.go` to display the user's configured working hours.
-    *   [ ] **Milestone Verification:**
-        *   [ ] Build the project (`go build ./...`).
-        *   [ ] Request user to test the `calctl work-hours` command.
+    *   [s] Implement logic in `internal/calendar/calendar.go` to get the user's working hours from their calendar settings using the `calendar.Settings.Get("workingHours").Do()` call.
+    *   [s] Create a new command `cmd/work-hours.go` to display the user's configured working hours.
+    *   [s] **Milestone Verification:**
+        *   [s] Build the project (`go build ./...`).
+        *   [s] Request user to test the `calctl work-hours` command.
 
 2.  **Implement Core Analysis Logic:**
-    *   [ ] Create a new file `internal/calendar/analysis.go`.
-    *   [ ] In this file, create a function `AnalyzeEvents` that takes a list of events and the user's working hours.
-    *   [ ] This function will perform the analysis and identify:
-        *   Any events that overlap with each other.
-        *   The user's response status (`accepted`, `tentative`, `needsAction`) for each event.
-        *   Any events that fall outside of the user's defined working hours.
-    *   [ ] The function will return a structured analysis report.
+    *   [x] Create a new file `internal/calendar/analysis.go`.
+    *   [x] In this file, create a function `AnalyzeEvents` that takes a list of events and the user's working hours.
+    *   [x] This function will perform the analysis and identify:
+        *   [x] Any events that overlap with each other.
+        *   [x] The user's response status (`accepted`, `tentative`, `needsAction`) for each event.
+        *   [s] Any events that fall outside of the user's defined working hours.
+    *   [x] The function will return a structured analysis report.
 
 3.  **Update CLI Command:**
-    *   [ ] Add a boolean `--analyze` flag to the `cmd/week.go` command.
-    *   [ ] When this flag is used, the command will call the new `AnalyzeEvents` function and print a formatted report to the console.
-    *   [ ] **Milestone Verification:**
-        *   [ ] Build the project (`go build ./...`).
-        *   [ ] Request user to test the `calctl week --analyze` command.
+    *   [x] Add a boolean `--analyze` flag to the `cmd/week.go` command.
+    *   [x] When this flag is used, the command will call the new `AnalyzeEvents` function and print a formatted report to the console.
+    *   [x] **Milestone Verification:**
+        *   [x] Build the project (`go build ./...`).
+        *   [x] Request user to test the `calctl week --analyze` command.
 
 4.  **Create New MCP Tool:**
-    *   [ ] Add a new tool named `analyze_weekly_calendar` to `mcp/server.go`.
-    *   [ ] The handler for this tool will call the same core `AnalyzeEvents` logic.
-    *   [ ] The tool will return the structured analysis report.
-    *   [ ] **Milestone Verification:**
-        *   [ ] Build the project (`go build ./...`).
-        *   [ ] Request user to start the MCP server and verify the `analyze_weekly_calendar` tool is available.
+    *   [x] Add a new tool named `analyze_weekly_calendar` to `mcp/server.go`.
+    *   [x] The handler for this tool will call the same core `AnalyzeEvents` logic.
+    *   [x] The tool will return the structured analysis report.
+    *   [x] **Milestone Verification:**
+        *   [x] Build the project (`go build ./...`).
+        *   [x] Request user to start the MCP server and verify the `analyze_weekly_calendar` tool is available.

@@ -8,15 +8,33 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var analyze bool
+
 // weekCmd represents the week command
 var weekCmd = &cobra.Command{
-	Use:   "week",
-	Short: "Displays events for the current week.",
-	Long:  `Displays events for the current week (Sunday to Saturday).`,
+	Use:   "week [date]",
+	Short: "Displays events for the current week, or the week of the given date.",
+	Long:  `Displays events for the current week (Sunday to Saturday). You can optionally provide a date in YYYY-MM-DD format to see events for that week.`, 
+	Args:  cobra.MaximumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		events, err := calendar.GetWeeklyEvents(calendarSvc)
+		var dateStr string
+		if len(args) > 0 {
+			dateStr = args[0]
+		}
+
+	
+events, err := calendar.GetWeeklyEvents(calendarSvc, dateStr)
 		if err != nil {
 			return err
+		}
+
+		if analyze {
+			report, err := calendar.AnalyzeEvents(events)
+			if err != nil {
+				return err
+			}
+			fmt.Println(report.FormatReport())
+			return nil
 		}
 
 		if len(events.Items) == 0 {
@@ -47,4 +65,5 @@ var weekCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(weekCmd)
+	weekCmd.Flags().BoolVar(&analyze, "analyze", false, "analyze the week's events")
 }
