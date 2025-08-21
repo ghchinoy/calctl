@@ -74,5 +74,5 @@ You can also run `calctl` as an MCP server to expose its functionality as tools.
 
 The following tools are available:
 
-*   `get_weekly_calendar(current_date: str)`: Get the user's calendar events for the week of the given date (YYYY-MM-DD). If the date is omitted, it uses the current week.
+*   `get_weekly_calendar(current_date: str)`: Get the user's calendar events for the week of the given date (YYYY-MM-DD). If the date is omitted, it uses the current week. This tool returns a JSON object containing a list of full event resources, including all details for each event.
 *   `get_event_details(event_id: str)`: Get the details of a specific event by its ID.

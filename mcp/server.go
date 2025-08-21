@@ -2,12 +2,12 @@ package mcp
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 	"log"
 	"net/http"
 	"os"
-	"time"
 
 	"github.com/ghchinoy/calctl/internal/auth"
 	"github.com/ghchinoy/calctl/internal/calendar"
@@ -110,31 +110,22 @@ func getWeeklyCalendarHandler(ctx context.Context, ss *mcp.ServerSession, params
 		return nil, err
 	}
 
-	var output string
 	if len(events.Items) == 0 {
-		output = "No upcoming events found for this week."
-	} else {
-		output = "Events for this week:\n"
-		for _, item := range events.Items {
-			date := item.Start.DateTime
-			if date == "" {
-				date = item.Start.Date
-			}
-			t, err := time.Parse(time.RFC3339, date)
-			if err != nil {
-				t, err = time.Parse("2006-01-02", date)
-				if err != nil {
-					output += fmt.Sprintf("- %s (Unable to parse date: %s)\n", item.Summary, date)
-					continue
-				}
-			}
-			output += fmt.Sprintf("- %s (%s) [%s]\n", item.Summary, t.Format("Mon, Jan 2 3:04 PM"), item.Id)
-		}
+		return &mcp.CallToolResultFor[any]{
+			Content: []mcp.Content{
+				&mcp.TextContent{Text: "No upcoming events found for this week."},
+			},
+		}, nil
+	}
+
+	jsonResult, err := json.MarshalIndent(events.Items, "", "  ")
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal events to JSON: %w", err)
 	}
 
 	return &mcp.CallToolResultFor[any]{
 		Content: []mcp.Content{
-			&mcp.TextContent{Text: output},
+			&mcp.TextContent{Text: string(jsonResult)},
 		},
 	}, nil
 }
