@@ -4,7 +4,19 @@ A command-line tool and MCP server for interacting with Google Calendar.
 
 ## Installation
 
-To build the tool from source, you need to have Go installed. Then run the following commands:
+You will need to have Go installed on your system.
+
+### Using `go install`
+
+Once the repository is public, you can install the `calctl` command directly:
+```bash
+go install github.com/ghchinoy/calctl@latest
+```
+Make sure that your Go `bin` directory is in your system's `PATH`. This is typically `$HOME/go/bin`.
+
+### From Source
+
+To build the tool from source, you can clone the repository and build it manually:
 
 ```bash
 git clone https://github.com/ghchinoy/calctl
