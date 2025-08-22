@@ -30,7 +30,7 @@ func GetWeeklyEvents(srv *calendar.Service, dateStr string) (*calendar.Events, e
 	tMax := endOfWeek.Format(time.RFC3339)
 
 	events, err := srv.Events.List("primary").ShowDeleted(false).
-		SingleEvents(true).TimeMin(tMin).TimeMax(tMax).OrderBy("startTime").Do()
+		SingleEvents(true).TimeMin(tMin).TimeMax(tMax).OrderBy("startTime").Fields("*").Do()
 	if err != nil {
 		return nil, fmt.Errorf("unable to retrieve events for the week: %v", err)
 	}
